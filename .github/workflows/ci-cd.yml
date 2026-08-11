@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Build and Push Microservices
+name: CI/CD Pipeline - Build, Push, and Verify Microservices
 
 on:
   push:
@@ -95,3 +95,27 @@ jobs:
             ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.name }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+  # ==========================================
+  # JOB 3: Validate Docker Compose Configuration
+  # ==========================================
+  validate-compose-stack:
+    needs: docker-build-push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose.yml Syntax
+        run: |
+          docker compose config
+
+      - name: Pull Fresh Images & Dry Run Stack
+        run: |
+          docker compose pull
+          docker compose up -d
+          sleep 10
+          docker compose ps
+          docker compose down
