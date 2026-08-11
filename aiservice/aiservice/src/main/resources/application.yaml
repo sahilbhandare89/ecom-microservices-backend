@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/ai_db
+    username: postgres
+    password: postgres
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+    show-sql: true
+
+    properties:
+      hibernate:
+        format_sql: true
+
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+
+      chat:
+        options:
+          model: smollm2
+
+      embedding:
+        options:
+          model: nomic-embed-text
+
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+
+server:
+  port: 8084
+
+  error:
+    include-stacktrace: always

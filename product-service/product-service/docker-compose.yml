@@ -1,0 +1,66 @@
+#services:
+#  mongodb:
+#    image: sha256:e0ce8c35124d4a9f9785532d1f268f39e9728ffa1cb38f46fa482436424c4bd3
+#    container_name: mongodb
+#    ports:
+#      - "27017:27017"
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: root
+#    volumes:
+#      - mongo_data:/data/db
+#    restart: unless-stopped
+#
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.18.1
+#    container_name: elasticsearch
+#    environment:
+#      - discovery.type=single-node
+#      - xpack.security.enabled=false
+#      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+#    ports:
+#      - "9200:9200"
+#    restart: unless-stopped
+#
+#  minio:
+#    image: sha256:14cea493d9a34af32f524e538b8346cf79f3321eff8e708c1e2960462bd8936e
+#    container_name: minio
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
+#    environment:
+#      MINIO_ROOT_USER: minioadmin
+#      MINIO_ROOT_PASSWORD: minioadmin
+#    command: server /data --console-address ":9001"
+#    volumes:
+#      - minio_data:/data
+#    restart: unless-stopped
+#
+#  create-bucket:
+#    image: minio/mc
+#    depends_on:
+#      - minio
+#    entrypoint: >
+#      /bin/sh -c "
+#      /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin;
+#      /usr/bin/mc mb myminio/product-images --ignore-existing;
+#      "
+#
+#  product-service:
+#    build: .
+#    container_name: product-service
+#    ports:
+#      - "8081:8081"
+#    depends_on:
+#      - mongodb
+#      - elasticsearch
+#      - minio
+#    environment:
+#      SPRING_DATA_MONGODB_URI: mongodb://root:root@mongodb:27017/product_db?authSource=admin&authMechanism=SCRAM-SHA-256
+#      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
+#      MINIO_ENDPOINT: http://minio:9000
+#    restart: on-failure
+#
+#volumes:
+#  mongo_data:
+#  minio_data:

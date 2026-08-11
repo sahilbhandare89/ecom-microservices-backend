@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/authservice
+    username: postgres
+    password: ${DB_PASSWORD}
+
+  logging:
+    level:
+      org.springframework.security: DEBUG
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    issuer: ${JWT_ISSUER:auth-service}
+
+    access-ttl-seconds: ${JWT_ACCESS_TTL_SECONDS:3600}
+    refresh-ttl-seconds: ${JWT_REFRESH_TTL_SECONDS:604800}
+
+    expiration: ${JWT_EXPIRATION:3600000}
+    refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:86400000}
+
+    refresh-token-cookie-name: ${JWT_REFRESH_COOKIE_NAME:refreshToken}
+
+    cookie-secure: ${JWT_COOKIE_SECURE:true}
+    cookie-http-only: ${JWT_COOKIE_HTTP_ONLY:true}
+    cookie-same-site: ${JWT_COOKIE_SAME_SITE:lax}
+
+
