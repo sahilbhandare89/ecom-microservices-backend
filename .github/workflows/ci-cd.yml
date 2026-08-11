@@ -108,6 +108,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Validate docker-compose.yml Syntax
         run: |
           docker compose config
@@ -116,6 +122,14 @@ jobs:
         run: |
           docker compose pull
           docker compose up -d
-          sleep 10
+
+      - name: Check Status & Print Container Logs on Failure
+        if: failure()
+        run: |
           docker compose ps
+          docker compose logs
+
+      - name: Tear Down Stack
+        if: always()
+        run: |
           docker compose down
