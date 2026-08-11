@@ -26,7 +26,7 @@ jobs:
           - name: cart-service
             path: cart-service/cart-service
           - name: ai-service
-            path: microservices_backend/aiservice/aiservice
+            path: aiservice/aiservice
           - name: api-gateway
             path: api-gateway-ecom/api-gateway-ecom
 
@@ -67,7 +67,7 @@ jobs:
           - name: cart-service
             path: cart-service/cart-service
           - name: ai-service
-            path: microservices_backend/aiservice/aiservice
+            path: aiservice/aiservice
           - name: api-gateway
             path: api-gateway-ecom/api-gateway-ecom
 
