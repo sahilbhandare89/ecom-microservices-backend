@@ -1,1 +1,93 @@
+name: CI/CD Pipeline - Build and Push Microservices
 
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  # ==========================================
+  # JOB 1: Test & Build Java Microservices
+  # ==========================================
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - name: eureka-server
+            path: microservices_backend/eureka_server/eureka_server
+          - name: auth-service
+            path: "microservices_backend/AuthService - Copy/AuthService"
+          - name: product-service
+            path: microservices_backend/product-service/product-service
+          - name: cart-service
+            path: microservices_backend/cart-service/cart-service
+          - name: ai-service
+            path: microservices_backend/aiservice/aiservice
+          - name: api-gateway
+            path: microservices_backend/api-gateway-ecom/api-gateway-ecom
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven (${{ matrix.service.name }})
+        run: |
+          cd "${{ matrix.service.path }}"
+          mvn clean test package -DskipTests
+
+  # ==========================================
+  # JOB 2: Build & Push Docker Images
+  # ==========================================
+  docker-build-push:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    strategy:
+      matrix:
+        service:
+          - name: eureka-server
+            path: microservices_backend/eureka_server/eureka_server
+          - name: auth-service
+            path: "microservices_backend/AuthService - Copy/AuthService"
+          - name: product-service
+            path: microservices_backend/product-service/product-service
+          - name: cart-service
+            path: microservices_backend/cart-service/cart-service
+          - name: ai-service
+            path: microservices_backend/aiservice/aiservice
+          - name: api-gateway
+            path: microservices_backend/api-gateway-ecom/api-gateway-ecom
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push Docker Image (${{ matrix.service.name }})
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.service.path }}
+          file: ./${{ matrix.service.path }}/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service.name }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ matrix.service.name }}:${{ github.sha }}
