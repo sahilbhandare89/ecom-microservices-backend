@@ -18,17 +18,17 @@ jobs:
       matrix:
         service:
           - name: eureka-server
-            path: microservices_backend/eureka_server/eureka_server
+            path: eureka_server/eureka_server
           - name: auth-service
-            path: "microservices_backend/AuthService - Copy/AuthService"
+            path: "AuthService - Copy/AuthService"
           - name: product-service
-            path: microservices_backend/product-service/product-service
+            path: product-service/product-service
           - name: cart-service
-            path: microservices_backend/cart-service/cart-service
+            path: cart-service/cart-service
           - name: ai-service
-            path: microservices_backend/aiservice/aiservice
+            path: aiservice/aiservice
           - name: api-gateway
-            path: microservices_backend/api-gateway-ecom/api-gateway-ecom
+            path: api-gateway-ecom/api-gateway-ecom
 
     steps:
       - name: Checkout Code
@@ -59,17 +59,17 @@ jobs:
       matrix:
         service:
           - name: eureka-server
-            path: microservices_backend/eureka_server/eureka_server
+            path: eureka_server/eureka_server
           - name: auth-service
-            path: "microservices_backend/AuthService - Copy/AuthService"
+            path: "AuthService - Copy/AuthService"
           - name: product-service
-            path: microservices_backend/product-service/product-service
+            path: product-service/product-service
           - name: cart-service
-            path: microservices_backend/cart-service/cart-service
+            path: cart-service/cart-service
           - name: ai-service
-            path: microservices_backend/aiservice/aiservice
+            path: aiservice/aiservice
           - name: api-gateway
-            path: microservices_backend/api-gateway-ecom/api-gateway-ecom
+            path: api-gateway-ecom/api-gateway-ecom
 
     steps:
       - name: Checkout Code
